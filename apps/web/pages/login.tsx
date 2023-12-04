@@ -4,9 +4,31 @@ import { FormButton } from "@/components/FormButton";
 import { useState } from "react";
 import axios from "axios";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { SignInSchema, signInSchema } from "@/schemas/auth.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "@/hooks/auth.hook";
+import { useRouter } from "next/router";
 
 export default function Login() {
-  const [password, setPassword] = useState("");
+  const router = useRouter();
+
+  const signIn = useAuth((state) => state.signIn);
+
+  const { register, handleSubmit } = useForm<SignInSchema>({
+    resolver: zodResolver(signInSchema),
+    reValidateMode: "onSubmit",
+  });
+
+  async function signInUser(input: SignInSchema) {
+    const result = await signIn(input);
+    switch (result) {
+      case "failure":
+        return console.log("usuário inválido");
+      case "success":
+        return router.push("/");
+    }
+  }
 
   return (
     <>
@@ -21,23 +43,19 @@ export default function Login() {
           <h1 className="text-slate-800 text-4xl font-poppins font-800 text-center">
             PLAY<span className=" text-rose-500">CHAT</span>
           </h1>
-          <form className="flex grow flex-col justify-between py-5 items-center">
-            <TextInput placeholder="Usuário" />
+          <form
+            className="flex grow flex-col justify-between py-5 items-center"
+            onSubmit={handleSubmit(signInUser)}
+          >
+            <TextInput placeholder="Usuário" {...register("username")} />
 
             <TextInput
-              type="password"
               placeholder="Senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              isPassword={true}
+              {...register("password")}
             />
 
-            <FormButton
-              label="Login"
-              type="submit"
-              onClick={async (e) => {
-                e.preventDefault();
-              }}
-            />
+            <FormButton label="Login" type="submit" />
           </form>
           <hr />
           <div className="flex flex-col items-center py-5 gap-3 ">

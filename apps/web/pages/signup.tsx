@@ -12,7 +12,7 @@ export default function SignUp() {
 
   const signUp = useAuth((state) => state.signUp);
 
-  const { register, handleSubmit, formState } = useForm<SignUpSchema>({
+  const { register, handleSubmit } = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
     reValidateMode: "onSubmit",
   });
@@ -51,12 +51,14 @@ export default function SignUp() {
             />
 
             <TextInput
+              isPassword
               placeholder="Senha"
               footer="Deve conter pelo menos 1 número e 6 caracteres"
               {...register("password")}
             />
 
             <TextInput
+              isPassword
               placeholder="Confirme sua senha"
               {...register("confirmPassword")}
             />
