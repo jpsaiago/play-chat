@@ -1,20 +1,23 @@
 import { initContract } from "@ts-rest/core";
-import { z } from "zod";
 import {
   loginInputSchema,
   signUpInputSchema,
   userResponseSchema,
-} from "../users/users.schemas";
+} from "./auth/auth.schema";
+import { z } from "zod";
+
+//Esse arquivo precisa viver na src para ser importado pelo frontend
 
 const c = initContract();
 
-export const usersContract = c.router({
+export const authContract = c.router({
   createUser: {
     method: "POST",
-    path: "/users/create",
+    path: "/auth/signup",
     responses: {
-      201: z.object({ id: z.string() }),
+      201: userResponseSchema,
       400: z.string(),
+      500: z.string(),
     },
     body: signUpInputSchema,
     summary: "Create a user",
@@ -24,17 +27,17 @@ export const usersContract = c.router({
 
   authenticateUser: {
     method: "POST",
-    path: "/users/authenticate",
+    path: "/auth/login",
     body: loginInputSchema,
     responses: {
       200: userResponseSchema,
     },
+    summary: "Authenticate a user",
+    description:
+      "Verifies the user's login credentials and returns an auth token",
   },
-  getUsers: {
-    method: "GET",
-    path: "/users",
-    responses: {
-      200: z.array(z.object({ id: z.string() })),
-    },
-  },
+});
+
+export const apiContract = c.router({
+  auth: authContract,
 });

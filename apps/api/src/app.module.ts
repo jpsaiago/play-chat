@@ -6,9 +6,10 @@ import { UsersController } from "./users/users.controller";
 import { UsersService } from "./users/users.service";
 import { UsersModule } from "./users/users.module";
 import { DatabaseService } from "./database/database.service";
+import { AuthModule } from "./auth/auth.module";
 
 @Module({
-  imports: [ConfigModule.forRoot(), UsersModule],
+  imports: [ConfigModule.forRoot(), UsersModule, AuthModule],
   controllers: [AppController, UsersController],
   providers: [AppService, UsersService, DatabaseService],
 })

@@ -2,8 +2,8 @@ import { z } from "zod";
 
 export const userResponseSchema = z.object({
   id: z.string(),
-  email: z.string().email(),
   username: z.string(),
+  token: z.string(),
 });
 
 export type UserResponseSchema = z.infer<typeof userResponseSchema>;
