@@ -4,6 +4,9 @@ import presetWebFonts from "@unocss/preset-web-fonts";
 import transformerVariantGroup from "@unocss/transformer-variant-group";
 
 export default defineConfig({
+  content: {
+    filesystem: ["**/*.{tsx}"],
+  },
   presets: [
     presetWind(),
     presetIcons(),

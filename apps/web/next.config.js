@@ -9,6 +9,9 @@ const nextConfig = {
     config.plugins.push(UnoCSS());
     return config;
   },
+  experimental: {
+    externalDir: true,
+  },
 };
 
 module.exports = nextConfig;
