@@ -1,8 +1,7 @@
-import { generateOpenApi } from "@ts-rest/open-api";
 import { NestFactory } from "@nestjs/core";
-import { SwaggerModule } from "@nestjs/swagger";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { AppModule } from "./app.module";
-import { apiContract } from "./contract";
+import { ValidationPipe } from "@nestjs/common";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -10,14 +9,17 @@ async function bootstrap() {
   });
   app.enableCors();
 
-  const openApiDocument = generateOpenApi(apiContract, {
-    info: {
-      title: "Playchat API",
-      version: "0.1.0",
-    },
-  });
+  const configSwagger = new DocumentBuilder()
+    .setTitle("PlayChat API")
+    .setDescription("Api for a realtime chatting application")
+    .setVersion("0.1.0")
+    .build();
 
-  SwaggerModule.setup("docs", app, openApiDocument);
+  const documentation = SwaggerModule.createDocument(app, configSwagger);
+
+  SwaggerModule.setup("docs", app, documentation);
+
+  app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(process.env.PORT || 3001);
 }

@@ -8,4 +8,8 @@ export class RedisService {
   constructor() {
     this.client = new Redis(`${process.env.REDIS_URL}`);
   }
+
+  destructor() {
+    this.client.quit();
+  }
 }

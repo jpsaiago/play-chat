@@ -1,19 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import { DatabaseService } from "../database/database.service";
-import { SignUpInputSchema } from "../auth/auth.schema";
-import { FilesService } from "../files/files.service";
+import { FileService } from "../file/file.service";
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly filesService: FilesService
+    private readonly filesService: FileService
   ) {}
 
-  async createUser(
-    userInfo: SignUpInputSchema,
-    profilePicture?: Express.Multer.File
-  ) {
+  async createUser(userInfo: any, profilePicture?: Express.Multer.File) {
     let profilePictureUrl: string | undefined = undefined;
 
     //Primeiro criamos o usuário, para garantir que imagens não sejam subidas sem um usuário correspondente

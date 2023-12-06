@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { SupabaseClient, createClient } from "@supabase/supabase-js";
 
 @Injectable()
-export class FilesService {
+export class FileService {
   supabaseClient: SupabaseClient;
 
   constructor() {

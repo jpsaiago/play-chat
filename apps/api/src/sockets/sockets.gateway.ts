@@ -27,9 +27,4 @@ export class SocketsGateway
   async handleDisconnect(client: Socket) {
     return await this.socketService.disconnectSocket(client);
   }
-
-  @SubscribeMessage("connection")
-  handleMessage(client: any, payload: any) {
-    console.log("evento certo");
-  }
 }
