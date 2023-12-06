@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { TextInput } from "@/components/TextInput";
 import { FormButton } from "@/components/FormButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -11,6 +11,8 @@ import { useAuth } from "@/hooks/auth.hook";
 import { useRouter } from "next/router";
 
 export default function Login() {
+  const user = useAuth((s) => s.currentUser);
+
   const router = useRouter();
 
   const signIn = useAuth((state) => state.signIn);
@@ -30,10 +32,16 @@ export default function Login() {
     }
   }
 
+  useEffect(() => {
+    if (user) {
+      router.push("/");
+    }
+  }, [user, router]);
+
   return (
     <>
       <Head>
-        <title>Play Chat</title>
+        <title>Play Chat - Login</title>
         <meta name="description" content="App de chat em grupo e individual" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -41,7 +49,7 @@ export default function Login() {
       <main className="bg-stone-100 h-[100vh] flex justify-center items-center">
         <div className="bg-white h-md w-sm px-10 flex flex-col py-10 rounded-lg shadow-md">
           <h1 className="text-slate-800 text-4xl font-poppins font-800 text-center">
-            PLAY<span className=" text-rose-500">CHAT</span>
+            PLAY<span className=" text-violet-500">CHAT</span>
           </h1>
           <form
             className="flex grow flex-col justify-between py-5 items-center"
@@ -62,7 +70,7 @@ export default function Login() {
             <h1 className="text-slate-700">Ainda não tem uma conta?</h1>
 
             <Link
-              className="bg-white rounded-md py-2 px-10 border-2 border-stone-300 hover:border-rose-500 text-slate-700 transition-colors "
+              className="bg-white rounded-md py-2 px-8 border-2 border-stone-300 hover:border-violet-500 text-slate-700 transition-colors "
               type="button"
               href={"/signup"}
             >

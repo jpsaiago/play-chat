@@ -11,6 +11,8 @@ export const signUpSchema = z
       }),
     password: z.string().min(6, "Sua senha deve ter pelo menos 6 caracteres"),
     confirmPassword: z.string(),
+    displayName: z.string(),
+    profilePicture: z.instanceof(File).optional(),
   })
   .superRefine(({ password }, ctx) => {
     if (!/\d/.test(password)) {
