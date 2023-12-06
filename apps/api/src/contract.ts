@@ -5,6 +5,7 @@ import {
   userResponseSchema,
 } from "./auth/auth.schema";
 import { z } from "zod";
+import { addUserSchema } from "./users/users.schema";
 
 //Esse arquivo precisa viver na src para ser importado pelo frontend
 
@@ -14,6 +15,7 @@ export const authContract = c.router({
   createUser: {
     method: "POST",
     path: "/auth/signup",
+    contentType: "multipart/form-data",
     responses: {
       201: userResponseSchema,
       400: z.string(),
@@ -38,6 +40,18 @@ export const authContract = c.router({
   },
 });
 
+export const usersContract = c.router({
+  addFriend: {
+    method: "POST",
+    path: "users/add-friend",
+    body: addUserSchema,
+    responses: {
+      201: z.literal("OK"),
+      404: z.literal("Usuário não encontrado"),
+    },
+  },
+});
+
 export const testAuthContract = c.router({
   testGuard: {
     method: "POST",
@@ -53,5 +67,5 @@ export const testAuthContract = c.router({
 
 export const apiContract = c.router({
   auth: authContract,
-  test: testAuthContract,
+  users: usersContract,
 });

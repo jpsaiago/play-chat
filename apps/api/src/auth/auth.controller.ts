@@ -6,9 +6,10 @@ import {
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Prisma } from "@prisma/client";
-import { TsRestHandler, tsRestHandler } from "@ts-rest/nest";
+import { TsRestHandler, TsRestRequest, tsRestHandler } from "@ts-rest/nest";
 import { authContract } from "../contract";
 import { AuthService } from "./auth.service";
+import { SignUpInputSchema } from "./auth.schema";
 
 @Controller()
 export class AuthController {
@@ -16,11 +17,14 @@ export class AuthController {
 
   @TsRestHandler(authContract)
   @UseInterceptors(FileInterceptor("profilePicture"))
-  async handler(@UploadedFile() file: Express.Multer.File) {
+  async handler(
+    @UploadedFile() file: Express.Multer.File,
+    @TsRestRequest() request: { body: SignUpInputSchema }
+  ) {
     return tsRestHandler(authContract, {
-      createUser: async (req) => {
+      createUser: async () => {
         try {
-          const user = await this.authService.createUser(req.body, file);
+          const user = await this.authService.createUser(request.body, file);
           return {
             status: 201,
             body: user,
@@ -43,7 +47,7 @@ export class AuthController {
           const user = await this.authService.authenticateUser(req.body);
           return {
             status: 200,
-            body: { username: user.username, token: user.token, id: user.id },
+            body: user,
           };
         } catch (error) {
           if (error instanceof HttpException) {

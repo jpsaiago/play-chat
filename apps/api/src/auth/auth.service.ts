@@ -16,6 +16,7 @@ export class AuthService {
     userInfo: SignUpInputSchema,
     profilePicture?: Express.Multer.File
   ) {
+    //Cria o usuário com os dados recebidos
     const user = await this.usersService.createUser(
       {
         email: userInfo.email,
@@ -50,6 +51,12 @@ export class AuthService {
       id: user.id,
       username: user.username,
     });
-    return { token, id: user.id, username: user.username };
+    return {
+      token,
+      id: user.id,
+      username: user.username,
+      profilePicture: user.profilePicture,
+      displayName: user.displayName,
+    };
   }
 }
