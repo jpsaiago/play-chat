@@ -12,18 +12,25 @@ export class AuthService {
     private readonly jwtService: JwtService
   ) {}
 
-  async createUser(userInfo: SignUpInputSchema) {
-    const user = await this.usersService.createUser({
-      email: userInfo.email,
-      username: userInfo.username,
-      password: await hash(userInfo.password, 10),
-    });
+  async createUser(
+    userInfo: SignUpInputSchema,
+    profilePicture?: Express.Multer.File
+  ) {
+    const user = await this.usersService.createUser(
+      {
+        email: userInfo.email,
+        username: userInfo.username,
+        password: await hash(userInfo.password, 10),
+        displayName: userInfo.displayName,
+      },
+      profilePicture
+    );
 
     const token = await this.jwtService.signAsync({
       id: user.id,
       username: user.username,
     });
-    return { token, id: user.id, username: user.username };
+    return { token, ...user };
   }
 
   async authenticateUser(credentials: LoginInputSchema) {

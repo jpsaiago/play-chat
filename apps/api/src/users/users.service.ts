@@ -1,24 +1,71 @@
 import { Injectable } from "@nestjs/common";
 import { DatabaseService } from "../database/database.service";
 import { SignUpInputSchema } from "../auth/auth.schema";
+import { FilesService } from "../files/files.service";
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly filesService: FilesService
+  ) {}
 
-  async createUser(userInfo: SignUpInputSchema) {
-    const createdUser = await this.databaseService.user.create({
+  async createUser(
+    userInfo: SignUpInputSchema,
+    profilePicture?: Express.Multer.File
+  ) {
+    let profilePictureUrl: string | undefined = undefined;
+
+    //Primeiro criamos o usuário, para garantir que imagens não sejam subidas sem um usuário correspondente
+    const userWithoutPicture = await this.databaseService.user.create({
       data: {
         email: userInfo.email,
         password: userInfo.password,
         username: userInfo.username,
+        displayName: userInfo.displayName,
+        profilePicture: profilePictureUrl,
       },
       select: {
         id: true,
         username: true,
+        displayName: true,
+        profilePicture: true,
       },
     });
-    return createdUser;
+    //Se uma foto for fornecida, faz o upload e armazena a url dela no banco de dados
+    if (profilePicture) {
+      profilePictureUrl = await this.filesService.uploadPicture(
+        profilePicture,
+        userInfo.username
+      );
+      const userWithPicture = await this.databaseService.user.update({
+        where: { id: userWithoutPicture.id },
+        data: { profilePicture: profilePictureUrl },
+      });
+      return userWithPicture;
+    }
+    return userWithoutPicture;
+  }
+
+  async updateUser(
+    userId: string,
+    payload: {
+      username?: string;
+      password?: string;
+      displayName?: string;
+      profilePicture?: string;
+    }
+  ) {
+    const updatedUser = await this.databaseService.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        ...payload,
+      },
+    });
+
+    return updatedUser;
   }
 
   async findOneUser(query: string, findBy: "username" | "email" | "id") {

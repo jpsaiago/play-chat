@@ -12,6 +12,7 @@ export const signUpInputSchema = z.object({
   username: z.string(),
   email: z.string().email(),
   password: z.string(),
+  displayName: z.string(),
 });
 
 export type SignUpInputSchema = z.infer<typeof signUpInputSchema>;

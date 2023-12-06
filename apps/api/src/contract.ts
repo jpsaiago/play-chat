@@ -38,6 +38,20 @@ export const authContract = c.router({
   },
 });
 
+export const testAuthContract = c.router({
+  testGuard: {
+    method: "POST",
+    path: "/files/test",
+    body: z.object({
+      username: z.string(),
+    }),
+    responses: {
+      200: z.any(),
+    },
+  },
+});
+
 export const apiContract = c.router({
   auth: authContract,
+  test: testAuthContract,
 });

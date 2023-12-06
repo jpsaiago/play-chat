@@ -1,22 +1,29 @@
-import { Controller, HttpException } from "@nestjs/common";
-import { AuthService } from "./auth.service";
+import {
+  Controller,
+  HttpException,
+  UploadedFile,
+  UseInterceptors,
+} from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { Prisma } from "@prisma/client";
 import { TsRestHandler, tsRestHandler } from "@ts-rest/nest";
 import { authContract } from "../contract";
-import { Prisma } from "@prisma/client";
+import { AuthService } from "./auth.service";
 
 @Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @TsRestHandler(authContract)
-  async handler() {
+  @UseInterceptors(FileInterceptor("profilePicture"))
+  async handler(@UploadedFile() file: Express.Multer.File) {
     return tsRestHandler(authContract, {
       createUser: async (req) => {
         try {
-          const user = await this.authService.createUser(req.body);
+          const user = await this.authService.createUser(req.body, file);
           return {
             status: 201,
-            body: { username: user.username, token: user.token, id: user.id },
+            body: user,
           };
         } catch (e) {
           if (e instanceof Prisma.PrismaClientKnownRequestError) {
